@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PR VGC Rankings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef1f6;
+    --card: #ffffff;
+    --ink: #121826;
+    --muted: #6b7385;
+    --line: #e6e9f0;
+    --row-alt: #f7f8fb;
+    --red: #ED0000;
+    --blue: #0050F0;
+    --bar: #dfe6fb;
+    --bar-fill: linear-gradient(90deg, #1f4fd8, #4f7bff);
+    --gold: #f2b705; --silver: #9aa3b2; --bronze: #c9773b;
+    --shadow: 0 20px 50px -20px rgba(18, 24, 38, .25);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0f17;
+    --card: #131a26;
+    --ink: #eef2f8;
+    --muted: #8b95a8;
+    --line: #222b3a;
+    --row-alt: #171f2d;
+    --bar: #1d2a45;
+    --bar-fill: linear-gradient(90deg, #3b6cff, #7d9cff);
+    --shadow: 0 20px 50px -20px rgba(0, 0, 0, .7);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 24px 16px 48px;
+  }
+  .controls {
+    max-width: 760px; margin: 0 auto 14px; display: flex; gap: 8px; flex-wrap: wrap;
+    justify-content: flex-end; font-size: 13px; color: var(--muted);
+  }
+  .controls button, .controls select {
+    font: inherit; color: var(--ink); background: var(--card); border: 1px solid var(--line);
+    border-radius: 8px; padding: 6px 10px; cursor: pointer;
+  }
+  .card {
+    max-width: 760px; margin: 0 auto; background: var(--card); border-radius: 20px;
+    overflow: hidden; box-shadow: var(--shadow);
+  }
+  .accent { height: 6px; background: linear-gradient(90deg, var(--blue) 0 22%, var(--red) 22% 100%); }
+  header { padding: 26px 28px 18px; display: flex; align-items: center; gap: 16px; }
+  .flag { width: 66px; height: 44px; flex: none; border-radius: 6px; overflow: hidden;
+    box-shadow: 0 0 0 1px var(--line), 0 6px 14px -6px rgba(0,0,0,.35); }
+  .flag svg { display: block; width: 100%; height: 100%; }
+  h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+  .sub { margin-top: 4px; color: var(--muted); font-size: 14px; }
+  .sub b { color: var(--ink); font-weight: 600; }
+
+  .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 28px 20px; }
+  .pod {
+    border: 1px solid var(--line); border-radius: 14px; padding: 14px 14px 12px; position: relative;
+    overflow: hidden; min-width: 0;
+  }
+  .pod::after { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--medal); }
+  .pod .place { font-size: 12px; font-weight: 700; color: var(--medal); text-transform: uppercase; letter-spacing: .08em; }
+  .pod .name { font-size: 18px; font-weight: 700; margin-top: 4px; line-height: 1.2; overflow-wrap: anywhere; }
+  .pod .alias { font-size: 12px; color: var(--muted); margin-top: 2px; min-height: 15px; }
+  .pod .pts { font-size: 28px; font-weight: 800; margin-top: 8px; letter-spacing: -.02em; }
+  .pod .pts small { font-size: 12px; font-weight: 500; color: var(--muted); margin-left: 4px; letter-spacing: 0; }
+  .pod .na { font-size: 12px; color: var(--muted); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  thead th {
+    text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .08em; padding: 10px 12px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:nth-child(even) { background: var(--row-alt); }
+  td { padding: 10px 12px; vertical-align: middle; }
+  td:first-child, th:first-child { padding-left: 28px; width: 56px; }
+  td:last-child, th:last-child { padding-right: 28px; }
+  .rank { font-weight: 700; color: var(--muted); }
+  .rank.top { color: var(--ink); }
+  .pname { font-weight: 600; }
+  .palias { font-size: 12px; color: var(--muted); }
+  .cp { font-weight: 700; }
+  .barcell { width: 26%; }
+  .bar { height: 8px; border-radius: 99px; background: var(--bar); overflow: hidden; }
+  .bar > i { display: block; height: 100%; border-radius: 99px; background: var(--bar-fill); }
+  footer {
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 14px 28px 18px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--line);
+  }
+  .hide-alias .palias, .hide-alias .pod .alias { display: none; }
+  .hide-secondary .sec { display: none; }
+
+  @media (max-width: 600px) {
+    header { padding: 20px 16px 14px; }
+    .podium { grid-template-columns: 1fr; padding: 0 16px 16px; }
+    td:first-child, th:first-child { padding-left: 16px; }
+    td:last-child, th:last-child { padding-right: 16px; }
+    .barcell, .sec, .nacol { display: none; }
+    footer { padding: 12px 16px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="controls">
+  <select id="limit" title="How many players to show">
+    <option value="0">All players</option>
+    <option value="10">Top 10</option>
+    <option value="16">Top 16</option>
+    <option value="25">Top 25</option>
+  </select>
+  <button id="toggleAlias">Hide nicknames</button>
+  <button id="toggleSec">Hide play points</button>
+  <button id="toggleTheme">Dark</button>
+</div>
+
+<div class="card" id="card">
+  <div class="accent"></div>
+  <header>
+    <div class="flag" aria-label="Flag of Puerto Rico"><svg viewBox="0 0 30 20">
+      <rect width="30" height="20" fill="#fff"/>
+      <rect y="0" width="30" height="4" fill="#ED0000"/><rect y="8" width="30" height="4" fill="#ED0000"/><rect y="16" width="30" height="4" fill="#ED0000"/>
+      <path d="M0 0L17.32 10L0 20Z" fill="#0050F0"/>
+      <path fill="#fff" d="M5.77 7.1l.68 2.08h2.19l-1.77 1.29.68 2.08-1.78-1.29-1.77 1.29.68-2.08-1.77-1.29h2.19z"/>
+    </svg></div>
+    <div>
+      <h1 id="title">Puerto Rico VGC Rankings</h1>
+      <div class="sub" id="sub"></div>
+    </div>
+  </header>
+  <section class="podium" id="podium"></section>
+  <table>
+    <thead><tr id="thead"></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <footer>
+    <span id="foot-left"></span>
+    <span id="foot-right"></span>
+  </footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+
+const $ = id => document.getElementById(id);
+const fmt = n => Number(n).toLocaleString("en-US");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const title = s => s.charAt(0).toUpperCase() + s.slice(1);
+const sameName = r => r.display_name.toLowerCase() === r.name.toLowerCase();
+const shortType = { championship: "CP", play: "Play" };
+
+function render() {
+  if (!DATA) {
+    $("sub").textContent = "No data embedded. Generate this page with: python pr_leaderboard.py --html";
+    return;
+  }
+  const { meta, rows } = DATA;
+  const P = meta.primary + "_points", S = meta.secondary + "_points";
+  const limit = Number($("limit").value) || rows.length;
+  const shown = rows.slice(0, limit);
+  const max = Math.max(1, ...rows.map(r => r[P]));
+  const asOf = new Date(meta.calculation_date);
+  const dateStr = isNaN(asOf) ? meta.calculation_date
+    : asOf.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+  $("sub").innerHTML =
+    `<b>${esc(meta.region)} ${esc(title(meta.division))}</b> · ${esc(title(meta.primary))} Points · as of ${esc(dateStr)}`;
+
+  const medals = [["1st", "var(--gold)"], ["2nd", "var(--silver)"], ["3rd", "var(--bronze)"]];
+  $("podium").innerHTML = rows.slice(0, 3).map((r, i) => `
+    <div class="pod" style="--medal:${medals[i][1]}">
+      <div class="place">${r.rank === i + 1 ? medals[i][0] : "T-" + r.rank}</div>
+      <div class="name">${esc(r.name)}</div>
+      <div class="alias">${sameName(r) ? "" : "as " + esc(r.display_name)}</div>
+      <div class="pts">${fmt(r[P])}<small>${shortType[meta.primary] || title(meta.primary)}</small></div>
+      <div class="na">#${fmt(r.region_rank)} in ${esc(meta.region)}</div>
+    </div>`).join("");
+
+  $("thead").innerHTML = `
+    <th>#</th><th>Player</th><th class="barcell"></th>
+    <th class="num">${esc(title(meta.primary))}</th>
+    <th class="num sec">${esc(title(meta.secondary))}</th>
+    <th class="num nacol">${esc(meta.region)} Rank</th>`;
+
+  $("tbody").innerHTML = shown.map(r => {
+    const showAlias = !sameName(r);
+    return `<tr>
+      <td class="rank ${r.rank <= 3 ? "top" : ""}">${r.rank}</td>
+      <td><div class="pname">${esc(r.name)}</div>${showAlias ? `<div class="palias">${esc(r.display_name)}</div>` : ""}</td>
+      <td class="barcell"><div class="bar"><i style="width:${(r[P] / max * 100).toFixed(1)}%"></i></div></td>
+      <td class="num cp">${fmt(r[P])}</td>
+      <td class="num sec">${fmt(r[S])}</td>
+      <td class="num nacol">${fmt(r.region_rank)}</td>
+    </tr>`;
+  }).join("");
+
+  $("foot-left").textContent =
+    `${rows.length} Puerto Rican players ranked${limit < rows.length ? ` · showing top ${limit}` : ""}`;
+  $("foot-right").textContent = `${fmt(meta.total)} players on the ${meta.region} leaderboard · Source: Play! Pokémon`;
+}
+
+// ─── Controls (remembered per browser) ────────────────────────────────────
+function pref(k, v) {
+  try { if (v === undefined) return localStorage.getItem("prlb:" + k); localStorage.setItem("prlb:" + k, v); } catch (e) {}
+}
+function setClass(cls, on, btn, label) {
+  $("card").classList.toggle(cls, on);
+  btn.textContent = (on ? "Show " : "Hide ") + label;
+}
+$("toggleAlias").onclick = () => { const on = !$("card").classList.contains("hide-alias"); setClass("hide-alias", on, $("toggleAlias"), "nicknames"); pref("alias", on ? 1 : 0); };
+$("toggleSec").onclick = () => { const on = !$("card").classList.contains("hide-secondary"); setClass("hide-secondary", on, $("toggleSec"), (DATA?.meta.secondary || "play") + " points"); pref("sec", on ? 1 : 0); };
+$("toggleTheme").onclick = () => {
+  const dark = document.documentElement.dataset.theme !== "dark";
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("toggleTheme").textContent = dark ? "Light" : "Dark";
+  pref("theme", dark ? "dark" : "light");
+};
+$("limit").onchange = () => { pref("limit", $("limit").value); render(); };
+
+if (pref("theme") === "dark") $("toggleTheme").click();
+if (pref("limit")) $("limit").value = pref("limit");
+render();
+if (pref("alias") === "1") $("toggleAlias").click();
+if (pref("sec") === "1") $("toggleSec").click();
+else $("toggleSec").textContent = "Hide " + (DATA?.meta.secondary || "play") + " points";
+</script>
+</body>
+</html>

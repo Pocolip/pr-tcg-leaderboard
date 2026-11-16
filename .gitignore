@@ -1,0 +1,12 @@
+# The roster stays out of the repo; CI reads it from the COMPETITORS_JSON secret.
+competitors.json
+competitors*.json
+competitors.txt
+
+# Generated output
+pr_leaderboard.csv
+pr_leaderboard*.json
+pr_leaderboard.html
+site/
+
+__pycache__/
