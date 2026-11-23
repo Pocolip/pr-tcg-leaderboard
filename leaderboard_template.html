@@ -76,7 +76,7 @@
   table { width: 100%; border-collapse: collapse; font-size: 15px; }
   thead th {
     text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase;
-    letter-spacing: .08em; padding: 10px 12px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    letter-spacing: .08em; padding: 10px 12px; white-space: nowrap; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
   }
   th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
   tbody tr:nth-child(even) { background: var(--row-alt); }
@@ -153,7 +153,10 @@ const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString("en-US");
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const title = s => s.charAt(0).toUpperCase() + s.slice(1);
-const sameName = r => r.display_name.toLowerCase() === r.name.toLowerCase();
+// Same as the script's normalize(): ignore case, accents and punctuation.
+const norm = s => s.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}\s_]/gu, "")
+  .replace(/\s+/g, " ").trim().toLowerCase();
+const sameName = r => norm(r.display_name) === norm(r.name);
 const shortType = { championship: "CP", play: "Play" };
 
 function render() {
@@ -170,6 +173,9 @@ function render() {
   const dateStr = isNaN(asOf) ? meta.calculation_date
     : asOf.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
+  const game = (meta.product || "vg").toLowerCase() === "tcg" ? "TCG" : "VGC";
+  $("title").textContent = `Puerto Rico ${game} Rankings`;
+  document.title = `PR ${game} Rankings`;
   $("sub").innerHTML =
     `<b>${esc(meta.region)} ${esc(title(meta.division))}</b> · ${esc(title(meta.primary))} Points · as of ${esc(dateStr)}`;
 

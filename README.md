@@ -1,12 +1,12 @@
-# Puerto Rico VGC Leaderboard
+# Puerto Rico TCG Leaderboard
 
-Daily-updated ranking of Puerto Rican players on the Play! Pokémon VGC leaderboard,
+Daily-updated ranking of Puerto Rican players on the Play! Pokémon TCG leaderboard,
 built from the public `api.play.pokemon.com` leaderboard API.
 
 ## Local use
 
 ```
-python pr_leaderboard.py --html     # writes pr_leaderboard.csv and pr_leaderboard.html
+python pr_leaderboard.py --product tcg --html     # writes pr_leaderboard.csv and pr_leaderboard.html
 ```
 
 Needs Python 3.9+ and nothing else. Players and their nickname aliases live in

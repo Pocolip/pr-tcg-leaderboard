@@ -1,6 +1,6 @@
 """
-Puerto Rico VGC Leaderboard
-===========================
+Puerto Rico Pokémon Leaderboard
+===============================
 Pulls the Play! Pokémon leaderboard from the public API at
 api.play.pokemon.com and filters it down to the players in competitors.json,
 replacing in-game nicknames with real names via each player's "aliases".
@@ -9,6 +9,7 @@ No browser, no Tampermonkey, no third-party packages (stdlib only).
 
 Usage:
     python pr_leaderboard.py                       # NA masters VGC, championship points
+    python pr_leaderboard.py --product tcg         # NA masters TCG
     python pr_leaderboard.py -o pr.json            # write JSON instead of CSV
     python pr_leaderboard.py --all -o na_full.csv  # dump the whole leaderboard (names still alias-corrected)
     python pr_leaderboard.py --period <hash>       # a different season (see note below)

@@ -34,7 +34,7 @@ jobs:
             echo "::error::Repository secret COMPETITORS_JSON is not set."
             exit 1
           fi
-          python pr_leaderboard.py --quiet --no-save --html site/index.html ${PERIOD:+--period "$PERIOD"}
+          python pr_leaderboard.py --product tcg --quiet --no-save --html site/index.html ${PERIOD:+--period "$PERIOD"}
 
       - uses: actions/upload-pages-artifact@v3
         with:
